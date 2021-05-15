@@ -1,0 +1,753 @@
+﻿ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAyD0uLxTIl06RdfmuuMrHh7UtbRMKsVji8j34N7qMaMTK9cJICVauqMu+aBg+DQX1KBtWYDXsRa/+EC6m/msQBlrGvQ2/VfDYutUemRYbPpoC78grtVUdMdgMUAH1uxGYkMpGpsBtEKMf+q3YlZdPXUX0jBqrsdQVik2HZdtTI9LsonMR+nMuuH8/DvND/35oTuDeYqpyJqB03sekPDxggiOzDVgbfngELzAEgJH3as9wYIDT14FHssYfhw4J4of7MMMyBx5X6GhAvVTC6xaRCAcQG7n6gMVjFHruAdplR9tE3Q0d996KPJCkfLO55N6hv48M7Rt6hYsvqgSHiQkWzw== linux
+- job_name: 'jenkins'
+    metrics_path: /JenkinsPrometheus
+    static_configs:
+      - targets: ['34.83.117.127:8080']
+docker:Date: 04-04-2020 7:00 PM
+                                                    Docker --> Containerization tool. Using docker we can build and deploy our applications.
+                                                    Dockerfile --> It's a file using which we can create docker image.
+                                                  DockerImage --> Docker image is nothing but a package.
+                        Docker image contains Sotwares + App Code(Jar/War/Ear). What ever is requried to run a appliction.
+        Base Images(Software Images) Can be found in docker hub.Custom Images(Our Application Images Base Image + Appliction   package)
+               DockerContainers --> Container is run time instance of Image. Where application will be runing.
+             Docker commands: docker info ,docker build ,docker run ,docker pull
+     Docker Volumes ,Docker Networks ,Docker Compose,Docker Swarm
+                                                                                            Repositorie
+ Repositories --> Docker hub / Private Repo(Nexus)
+docker build -t <imageName>:<version>  .
+    -----Image name should have repo details along with app name & version
+    -----In Case of Public Repo
+    -----My dockerh hub Reponame/username 
+docker build -t dockerhandson/java-web-app:1
+                              Application
+     ----In Case Of Privare Repo
+docker build -t <HostName/IPOFRepo>:<PORT>/<appname>:<version>                                                  
+docker run -d - p <hostPort>:<containerPort> --name <containerName>  <imageName>
+                --- HostPort: TomcatContainerPot
+docker run -d -p 8080:8080 --name javawebappcontainer agunuworld/java-web-app:8
+                                                                                              05-04-2020 6:00 AM IST
+docker system prune --> It will remove all stopped contaienrs,unused networks, all dangling images.
+
+
+                                                                   Docker Image Commands
+                                                                =====================
+         -----How to crate image?
+docker build -t <imageName> .
+                                                                     Public Repo
+                                                                    ===========
+docker build -t  <dockerhubusername>/<appName>:<version> .
+ex:
+docker build -t  dockerhandson/java-web-app:1 .
+                                                               Private Repo
+                                                             ============
+docker build -t <PrivareRepoURL>:/<appName>:<version> .
+ex:
+docker build -t 189.32.89.23:8083:/java-web-app:1 ,or docker build -t nexus.tcs.com/java-web-app:1 
+                                                   Authenticate With Repo
+                                                   ======================
+docker login -u <userName> -p <password>  
+ex:
+docker login -u dockerhandson -p pfdaafdasf
+                                                      Private Repo
+                                                     ===========
+docker login -u <userName> -p <password>   <URL>
+ex:
+docker login -u admin  -p admin123 189.32.89.23:8083
+or
+docker login -u admin  -p admin123 nexus.tcs.com
+                                    ==How to push the image?
+docker push <imageNAme>
+ex:
+docker push dockerhandson/java-web-app:1 
+or 
+docker push  189.32.89.23:8083:java-web-app:1
+                                                                    Download image from repo
+                                                                =======================
+docker pull <imageName>
+docker pull dockerhandson/java-web-app:1 
+docker pull  189.32.89.23:8083:java-web-app:1
+                                                      How to list images
+                                                  =================
+docker images or docker image ls
+                                                          Will Return only image id's
+                                                          ====================
+ docker images -q
+                                                                   Inspect Image
+                                                                 =============
+docker image inspect <imageName or ID>
+docker  inspect <imageName or ID>
+docker image inspect dockerhandson/java-web-app:1
+docker inspect dockerhandson/java-web-app:1
+                                                           How to check/display image Layres?
+                                                            =============================
+docker history <imageName/ID> 
+ex
+docker history dockerhandson/java-web-app:1
+                                                                     How to remove image?
+                                                                     =================
+docker rmi <imageId/Name>
+                                                                        Multiple Images
+                                                                        =============
+docker rmi <imageId/Name>  <imageId/Name>  <imageId/Name>
+                                                                 How to delete all images?
+                                                                 ====================
+docker rmi  $(docker images -q)
+                                                      What is docker working directory location?
+                                                       ................................................................................................
+/var/lib/docker
+                                                       How to push image to another repo
+                                                       ..................................................................................
+docker pull dockerhandson/java-web-app:2
+docker tag dockerhandson/java-web-app:2 <yourUserName>/java-web-app:2
+ex:
+docker tag dockerhandson/java-web-app:2   gopinathgurram/java-web-app:2 
+docker login -u <username> -p <password>
+es:
+docker login -u gopinathgurram -p pass
+docker push <yourUserName>/java-web-app:2 
+ex:
+docker push gopinathgurram/java-web-app:2 
+                            #How can we move docker image from one server to another server with out repo? 
+                         # First Create a tar file(Will have all the layers of the image) for the image.
+1) docker save <imageName/Id> -o <fileName>.tar
+ex:
+docker sava dockerhandson/java-web-app:1 -o javaapp.tar
+                              #2) scp your tar file from server one to server two
+                               #3) In Server two
+ docker load -i <fileName>.tar
+ docker load -i javaapp.tar
+docker image prune -->     It will remove all dangling images. 
+                                                                                            Docker Container Commands
+                                                                                           ========================
+Create Container
+docker create -p <hostPort>:<contianerPort> --name <containerName>  <imageName>
+  or
+  docker run  -p <hostPort>:<contianerPort> --name <containerName>  <imageName>
+docker run  -d  -p <hostPort>:<contianerPort> --name <containerName>  <imageName>
+                                              #What is difference b/w docker create and docker run ?
+                                              #create will only create a container but it will not start the container.
+                                              #run  will create container and also it will start the container.
+                                                                                Start Container
+                                                                              ===============
+docker start <containerId/Name>
+                                                                       List Containers
+                                                                    ===============
+                                                        # Display only running containers
+docker ps or docker container ls
+                                                      # Display all(Runing+Stopped) containers
+docker ps -a or docker container ls -a
+docker ps -q   or docker container ls -q
+docker ps -aq  or docker container ls -q
+                                                              Stop Container
+                                                           ===============
+docker stop <containerId/Name>
+                                                            Restart Container
+                                                          ===============
+docker restart <containerId/Name>
+                                                        Pause Container
+                                                     ===============
+docker pause <containerId/Name>
+                                                    Unpause Container
+                                                  ===============
+docker unpause <containerId/Name>
+                                              Hot to remove container?
+                                             ...........................................................
+                               # Delete stopped contaianer. If container is runing it will not delete.We need to stop and delete or force delete.
+docker rm <containerId/Name>
+                             # Force Removal of container so it can delete cotainers even though container is runing
+docker rm -f <containerId/Name>
+                                 #How to  all  containers?
+docker rm -f $(docker ps -aq)
+                                #How to remove only stopped containers?
+docker container prune                        --> It will delete all stopped containers.
+docker rm $(docker ps -a --filter "status=exited")
+                                   #How can we troubleshoot applications which are runinging in containers?
+                                    #Check Logs of the container
+docker logs <containerId/Name>
+docker top <containerId/Name>
+                                      #How to excute some command in a running continer?
+docker exec <containerName/Id> <command>
+docker exec javawebappcontainer ls
+                                       #How can we login into a  container ?
+docker exec -it <containerName/Id> /bin/bash
+ If /bin/bash doesn't work try with /bin/sh 
+          Or
+docker exec -it <containerName/Id> /bin/sh
+                                 # Docker attach will attach std in and std out std error to the current terminal
+docker attach <containerName/Id>
+                                      #How can we copy files from container to system or system to container?
+                                        #Container to system
+docker cp <containerName>:/<pathOfContainerFile>   <sytemPath>
+Ex:
+docker cp javawebappcontainer:/usr/local/tomcat/logs/catalina.2020-04-05.log logsoftomcatcontainer.log
+                                           # System to container 
+docker cp  <sytemPath> <containerName>:/<pathOfContainerFile>  
+                                            #What is docker commit ?
+Using docker commit we can create an image from the container.
+docker commit <containerId/Name> <imageName>
+docker stop vs docker kill 
+docker stop will send SIGTERM and SIGKILL after grace period.
+docker kill will send SIGKILL.
+docker container inspect <containerID/Name>
+docker inspect <containerId/Name>
+                                                           #To delete specific container which created form sepcific image
+docker ps -a | awk '$2=="jenkins/jenkins:lts" {print  $1}' |xargs docker rm -f
+#Dockerfile --> Dockerfile is the input for the docker image.In Dockerfile we write the instrunctions  
+               Using docker file keywords. Docker will process these instructions from top to bottom.
+FROM --> FROM key word will indicate the base image from which we are build our own image.
+FROM <baseImageName>:<Version>
+MAINTAINER --> Using this we can mention the author of the docker file.It's like a comments
+MAINTAINER  MithunTech <devopstrainingblr@gmail.com>
+COPY     --> COPY will copy local files from Host System to the image.While creating image.
+COPY   <localSystemFilePath> <imageFilePAth>
+ADD      --> ADD can copy local files from host system to the image and also it can download files from 
+             Remote Servers using http/s Endpoints.
+ADD   <localSystemFilePath> <imageFilePAth>
+ADD   HTTP/SURL  <imageFilePAth>
+RUN      --> RUN is a key word in docker file. Using RUN we can execute commands. RUN commands will be 
+             executed while creating image. RUN key words can be used to install some software while creating image.We can have n number of RUN commands all the RUN commands will be executed  sequentially.
+ex:
+RUN  mdkir -p /usr/local/tomcat
+RUN  apt update -y
+CMD     -->  Using CMD we can execute commads. CMD Commands will be executed while creating a container.
+             We can have more than one CMD. But docker will exeucte only one CMD(latest/last the one). 
+                         CMD commands will be used to start the application(process inside a container). CMD command can
+                         be overriden while creating a container.
+#ENTRYPOINT --> Using ENTRYPOINT we can execute commands. ENTRYPOINT commands will be executed while  creating a container. ENTRYPOINT commands will be used to start the application(process inside a container). ENTRYPOINT Cann't be overridden.
+#If we have both CMD & ENTRYPOINT in a dockerfile. CMD commands will be passed as on arguments for ENTRYPOINT.
+#In which scenario we can use both CMD & ENTRYPOINT?
+#We can use CMD & ENTRYPOINT together if we have to pass/override arguments for your entrypoint at run time(While creating a container).
+#Can we have more than one process in a contaier ?
+#Yes we can have more than one process in a container. It's not suggestable as the whole concept of isolation is not used.
+#WORKDIR -- We can set a working directory for a image/container. All the process will be executed under the directory which we have mentioned using WORKDIR.It's like cd.
+ex:
+WORKDIR /usr/local/tomcat
+ENV --> We can set environmet varaibles for image/container using ENV key word.
+ENV JAVA_HOME /usr/bin/java
+ENV CATALINA_HOME /usr/local/tomcat
+EXPOSE --> EXPOSE can be considred as documentation. Using EXPOSE the user of the image can understand what port will be used in the image.
+ex:
+EXPOSE 8080
+USER --> Using USER key word in a docker file we can set/switch an user for image/container.
+ex:
+USER jenkins
+VOLUME --> Using volume key word we can mount container folders with host system.
+VOLUME /var/lib/jenkins
+LABEL --> Using label we can set metadata for an image.
+ex:
+LABEL BRANCH_NAME develop
+ARG --> Using ARGS we can define varaible in a docker file that can be reffered any where in docker file. While building an image we can pass args vaules dynamically .
+ARG BRANCH_NAME=develop
+                      #What is difference b/w CMD & ENTRYPOINT?
+1) CMD commands can be overriden while creating a container. ENTRYPOINT commands can't be overridden       while creating a container.
+2) CMD commands will be execute as child process under /bin/bash or /bin/sh main process.CMD command will be executed as /bin/bash -c "command".
+3) ENTRYPOINT commands will be executed a main process /bin/<command> .
+                   #What are the best practices we have to follow while wrting docker file?
+1) Try to reduce number of layers for docker your image by combining multiple RUN key words in to single RUN.
+2) Dont have/install unnecessary packages in your image.Have only minimal packages/software which are required run our application. So that image will be very light weight.
+3) Try to use alpine(light weight linux base image.5MB) base image where ever it's possible
+                                                                          #What is network ?
+                                    #Group of servers will be connected to each other in a specific network. If Servers
+                                       #are in same network each one can talk to another server.
+Docker networkc2
+                                    #If One Container has to talk to another Container in Docker. Both has to created under
+same docker network.
+                                   #If Containers are in two different networks. They can't accees each other.
+docker run -d -p <hostPort>:<containerPort> --name <containerName> <imageName>
+                                   #In which docker network the container will be created if we don't mention network name while creating a container ?
+                                    #Containers will be created in a default bridge network.If we don't mention network name while creating a container.
+                                     #How to list networks in docker?
+docker network ls
+                                    #Docker will have 3 networks by default.
+bridge(default)
+host
+none/null
+docker run -d -p 8080:8080 --name javawebappcontainer dockerhandson/java-web-app:1
+docker run -d --name mysqlcontianer -e MYSQL_ROOT_PASSWORD=devops@2019  mysql
+                                    #If containers are created in a default bridge network. Communcation will happen only
+                                      #with IP Address of container. Communcation will not happen using containerName(hostName).
+                                      #We should code the connectivity based on the IP. Since IP address of cotnainers will be dynamic.
+IP will keep changing.
+                                # How to create a custom bridge network ?
+                              # Create Network
+ docker network create -d <driver> <networkName>
+Ex: 
+docker network create -d bridge agununetwork
+                             # Inspect network
+docker network inspect <networkNameOrId>
+                           # Remove unused networks
+docker network prune 
+                        # Remove One or More Cotnainers
+docker network rm <networkNameOrId>
+docker run -d -p 8080:8080 --name tomcatcotnainer --network flipkartnetwork dockerhandson/java-web-app
+                      #Create another container in same network and try to ping with name & IP from above container.
+docker run -d -p  --name mongodb --network agununetwork mongo
+                     #If containers are created in custom bridge network. Each container can access other using containerName/ContainerIP.
+                      #Docker Host Network.
+                       #If we create contaienrs in host network. Container will not have IP Address. Container will be created in a system network.
+                        #But we can't create more than one cotnainer with same container port in host network.
+Docker none/null network
+                    #If we create contaienrs in none/null network. Container will not have IP Address.We can't  accees these contianers from out side or from any other cotnainer.
+                                                                     Volumes:
+                                                                 =======
+                    #1) Create docker network using below commond(If it's not created already)
+ docker network create  -d bridge flipkartnetwork
+                  #2) Create Spring Application Container in above network & which will talk to mongo data base container
+ docker run -d -p 8080:8080 --name agunuapp --network agununetwork  agunuworld/spring-boot-mongo:5
+                       #3) Create a mongo contianer with out volume in above network
+ docker run -d --name mongo --network flipkartnetwork mongo
+                      #4) Access Spring application & insert data it will be inserted to mongo db. Delete and recreate mongo container 
+   what ever you have inserted will no longer be availbale. As once we delete contaienr data also will be deleted in container.
+                      #Bind Mounts
+                      #When we use bind mount , a file or directory on the host machine is mounted into a container. The directory is referenced by it's full or relative path.
+                       #Bind mounts will have limited functionality compared to volumes.
+ docker run -d --name mongo -v /root/Docker_HandsOnProject/docker_volume_storage/mongodbbackupp:/data/db --network flipkartnetwork mongo
+                           #Volumes
+              #Volumes are prefered way for persisting data generated and used by docker containers.While bind mounts are dependent on the directory strucute of the host system.
+Volume are completely managed by docker.
+Volumes are easier to backup or migrate.
+We can mange volumes using docker cli.
+Volumes will work in both linux/windows.
+Volume drivers will  let us to store data on remote servers or cloud providers.
+                                                 #How to list volumes?
+docker volume ls
+                                                     # How to create a volume
+#docker volume create -d <driver> <volumeName>
+#ex:
+#docker volume create -d local  mongobkp
+                                               #How to mount volume with docker container?
+docker run -d -v <volumeName>:<containerPath> --network <networkName> <imageName>
+ex:
+docker run -d -p 8080:8080 --name agunuapp   agunuworld/spring-boot-mongo:5
+ docker run -d -p 8080:8080 --name agunuapp --network agununetwork  agunuworld/spring-boot-mongo:5
+docker run -d  --name mongo -v mongobkp:/data/db  --network agununetwork mongo
+                                                   # Install Rex ray EBS Volume driver plugin
+rexray.readthedocs.io/en/stable/user-guide/schedulers/docker/plug-ins/aws/
+
+
+docker plugin install rexray/ebs EBS_ACCESSKEY=<awsAccessKey> EBS_SECRETKEY=<aws_secretkey>
+EX:
+docker plugin install rexray/ebs EBS_ACCESSKEY=AKIAUQ6YGCGHCGI4WLMI EBS_SECRETKEY=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
+docker volume create -d rexray/ebs mongodbbkp
+AKIAJBXV63L3MYPZSB7Q
+g7WVrfz1eAfQO2uAsiBIs9l/XFXrETj3hSgoB34D
+docker plugin install rexray/s3fs \  S3FS_ACCESSKEY=AKIAJIV3V2OLTBE5O6HQ \  S3FS_SECRETKEY=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
+docker volume create -d rexray/s3fs mongoebsbkp
+docker plugin install --alias rexray/s3fs --grant-all-permissions \
+  rexray/s3fs:0.11.3 \
+  S3FS_ACCESSKEY=AKIAJIV3V2OLTBE5O6HQ \
+  S3FS_SECRETKEY=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 \
+  S3FS_REGION=us-west-2 \
+  REXRAY_LOGLEVEL=debug
+
+
+ docker plugin install rexray/s3fss \
+  S3FS_ACCESSKEY=AKIAJIV3V2OLTBE5O6HQ \
+  S3FS_SECRETKEY=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
+
+
+
+
+AWSAccessKeyId=AKIAJIV3V2OLTBE5O6HQ
+AWSSecretKey=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
+                                                  #Volume Mapping While creating a container
+ docker run -d -p 8080:8080 --name agunuapp --network agununetwork  agunuworld/spring-boot-mongo:5
+docker run -d  --name mongo -v mongoebsbkp:/data/db  --network agununetwork mongo
+docker run -d  --name mongo -v mongoebsbkp:/data/db  --network flipkartnetwork mongo
+                                                     #Docker Compose:
+                                                       #It's tool for defining and runing multicontainer applications.It's a yml file.
+                                                         #With Out Compose:
+                                                           #We have to run long docker run commands to deploy multi continer applications.
+docker volume create -d <driver> <volumeName>
+docker volume create -d local mongobackup
+docker network create -d <driver> <networkNAme>
+docker network create -d bridge springappnetwork
+docker run -d -p 8080:8080 --name springcontaienr --network springappnetwork dockerhandson/spring-boot-docker
+docker run -d --name mongo --network springappnetwork -v mongobackup:/data/db mongo
+                                                        #With Compose
+                                                           #Install docker compose using below command:
+sudo apt install docker-compose
+                                                  #We will define all the serivces(cotainers) details in compose file using compose file we can deploy multi container applications.
+defautl name: docker-compose.yml or docker-compose.yaml
+                                                   #Example 1: (Volumes & Networks also will be created by docker compose)
+version: '3.1' # Docker Comopose File Format Version
+
+
+services:
+  springapp:
+    image: dockerhandson/spring-boot-mongo
+    ports:
+    - 8080:8080
+    networks:
+    - flipkartbridge
+    container_name: springappcotnaienr
+
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    networks:
+    - flipkartbridge
+    volumes:
+    - mongobkp:/data/db
+
+
+volumes:
+  mongobkp:
+            
+networks:
+  flipkartbridge:
+                                       #Example 2: (Volumes & Networks will not be created by docker compose.As we set volumes and networks as external)
+version: "3.1"
+services:
+  springboot:
+    image: dockerhandson/spring-boot-mongo
+    container_name: springboot
+    ports:
+    - 8080:8080
+    
+  mongo: 
+    image: mongo
+    container_name: mongo
+    volumes:
+    - mongobackup:/data/db
+
+
+volumes:
+  mongobackup:
+    external: true
+
+
+networks:
+  default:
+   external:
+    name: springappnetwork 
+                                                                               #Docker commands
+docker-compose conig
+docker-compose up -d
+docker-compose down        
+                         Example 3: (Volumes & Networks will be created by docker compose.We can pass environment varibles to containers while creating if required)If Custom Name 
+docker-compose-wordpress.yml
+
+
+version: '3.1'
+
+
+services:
+   db:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+     networks:
+     - wordpressnetwork  
+
+
+   wordpress:
+     depends_on:
+       - db
+     image: wordpress:latest
+     ports:
+       - "8000:80"
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+     networks:
+     - wordpressnetwork
+
+
+volumes:
+  db_data:
+
+
+networks:
+  wordpressnetwork:
+    driver: bridge
+docker-compose -f docker-compose-wordpress.yml config
+docker-compose -f docker-compose-wordpress.yml up -d
+docker-compose -f docker-compose-wordpress.yml down
+                               #docker is a containerization platfrom. Using which we build and deploy our applications as a contaier.
+                               #Orchestration 
+                              #Docker Swarm is a container orchestration tool.
+Scale Containers
+Load Balance Containers
+Manage Cotnainer Lifecycle
+                         #Create 3 Redhat Linux Systems in AWS Execute following commands
+#!/bin/sh
+sudo sudo yum update
+sudo tee /etc/yum.repos.d/docker.repo <<-'EOF'
+sudo yum install docker-engine
+sudo systemctl enable docker.service
+sudo systemctl start docker
+sudo usermod -a G docker ec2-user
+-------------------------------------------------------
+sudo groupadd docker
+sudo usermod -aG docker ${USER}
+sudo usermod -aG docker $USER                  ----optional
+chmod 777 /var/run/docker.sock
+-------------------------------------------------------------------------------------------------------------------
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum makecache fast
+sudo yum install -y http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.33-1.git86f33cd.el7.noarch.rpm
+sudo yum install -y docker-ce
+                    #Create 3 Amazon Machine Image Linux Systems in AWS Execute following commands
+#!/bin/bash
+yum -y install httpd
+service httpd start
+chkconfig httpd on
+echo " this is Boot strapping is my third on with docker on amazon ec2 linux " > /var/www/html/index.html
+service httpd restart
+
+#!/bin/bash
+sudo yum update -y
+sudo yum install docker -y
+sudo service docker start
+sudo usermod -aG docker ec2-user
+                         #Create 3 Ubuntu Linux Systems in AWS Execute following commands 
+#!/bin/bash
+sudo apt-get update
+sudo apt-get install curl -y
+sudo curl -fsSL get.docksal.io | bash
+sudo usermod -aG docker ubuntu
+
+
+ ///////////////////////////////////
+wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip
+
+Step3) Set the class path/Environmental Variable
+
+vi ~/.bash_profile
+
+export M2_HOME="/opt/apache-maven-3.6.3"
+export PATH=$PATH:$M2_HOME/bin
+
+source ~/.bash_profile
+
+Step4) Check the Maven version
+
+mvn -version
+
+                            #Logout from the the terminal and login again
+                             #Note: Make Sure You Open Required/All Ports in AWS Security Groups.
+                              ======================================================================
+                           # Initialize docker swarm cluster by exeuting below command on docker server which you want make it as Manager
+docker swarm init 
+docker network create -d overlay  agununetwork
+
+
+docker plugin install rexray/ebs EBS_ACCESSKEY=AKIAJIV3V2OLTBE5O6HQ EBS_SECRETKEY=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
+docker volume create -d rexray/ebs mongodbbkp
+
+
+                              # Initialyze Docker swarm with Public IP
+                               #Note: Don't use below(If restart your systems public ip will change will break your cluster) use above commond to initilaze cluster.
+-------docker swarm init  --listen-addr=eth0 --advertise-addr $(curl http://169.254.169.254/latest/meta-data/public-ipv4) (Only run in manager node)
+docker swarm join-token worker                                                                             (Get the token in manager & exeute in nodes)
+docker swarm join-token manager                                                                           (Get manager token and execute it in propose manager node)
+                                     ======================================================================
+docker run  imageName --> It will create/deploy one application  in single machine  --> docker service create
+docker-compose up     --> To create/deploy mutiple applications in single mahcine   --> docker stack deploy --composefile docker-compose.yml
+Docker Swarm has two modes
+                         Global   --> All the nodes (3 servers 1 Manager + 2 Workers)
+                         Replicas --> It will deploye based on replicated number.
+ docker service create --name agunu4 -p 8080:8080 agunuworld/java-web-app:2  ----single
+docker service create  -p 8080:8080 --name javawebapp --replicas 2 dockerhandson/java-web-app
+                         # User constriants to create containers in specific docker hosts based on condtion
+docker service create  -p 8080:8080 --name javawebapp --replicas 2 --constraint 'node.role==worker' dockerhandson/java-web-app
+                        # Create a service with a rolling update policy
+docker service create --replicas 2  --name nginxservice  --update-delay 10s --update-parallelism 1  nginx:alpine
+docker service update --image nginx:latest nginxservice
+                                         # Create a service with Volume mapping
+docker service create  -p <hostPort>:<containerPort> --name <serviceName> --replicas 1  --mount type=volume,source=<volumeName>,destination=<containerfolderPath> <imageName>
+FROM tomcat:8.0.20-jre8
+RUN sed -i '/<\/tomcat-users>/ i\<user username="admin" password="agunu" roles="admin-gui,manager-gui"/>' /usr/local/tomcat/conf/tomcat-users.xml
+#COPY tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
+COPY target/java-web-app*.war /usr/local/tomcat/webapps/java-web-app.war
+
+
+# List Services
+docker service ls
+                                 # List Services process
+docker service ps <servicenName>
+                                    # Scale Services 
+docker service scale javawebapp=3
+docker service rm javawebapp
+                                           # Add labels to node
+docker node update --label-add key=value <nodeid>
+Ex: docker node update --label-add server=nodeone qmdh9tgvdef99sryhbezswfl9
+                                      #Use above label in constrainsts
+docker service create  -p 8080:8080 --name javawebapp --replicas 1 --constraint 'node.labels.server==nodeone' dockerhandson/java-web-app
+                                      # Drain Nodes in Cluster(Swarm will not create containers in drained nodes)
+docker node update --availability drain <NodeID>
+  # Stack Deploy
+
+
+version: '3.1'
+
+
+services:
+  springboot:
+    image: dockerhandson/spring-boot-mongo:latest
+    restart: always
+    container_name: springboot
+    ports:
+      - 8182:8080
+    working_dir: /opt/app
+    depends_on:
+      - mongo
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s      
+      restart_policy:
+        condition: on-failure   
+
+
+  mongo:
+    image: mongo
+    container_name: mongo
+#    ports:  # for demo/debug purpose only
+#      - 27018:27017
+    volumes:
+      - data:/data/db
+      - data-bkp:/data/bkp
+    restart: always
+    
+volumes:
+    data:
+    data-bkp:
+        
+=================================================================
+
+
+
+
+docker stack deploy --compose-file docker-compose.yml springmongo
+
+
+docker stack ls
+
+
+docker stack rm <stackName>
+
+
+# To come out of swarm execute below commond in worker node
+docker swarm leave
+
+
+# Remove node from Manager
+docker node rm <nodename>
+
+
+
+
+
+
+version: '3.1'
+  
+services:
+  springboot:
+    image: dockerhandson/spring-boot-mongo:latest
+    restart: always
+    container_name: springboot
+    ports:
+      - 8182:8080
+    working_dir: /opt/app
+    depends_on:
+      - mongo
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    volumes:
+      - data:/data/db
+      - data-bkp:/data/bkp
+    restart: always
+
+
+volumes:
+    data:
+      external: true
+    data-bkp:
+      external: true
+          
+networks:
+default:
+    external:
+      name: flipkartoverlay
+                                                                      SELF_PRACTICE 2 modes
+              ------how to create a single service,and the same container can be access in the worker node
+docker service create --name agunu4 -p 8080:8080 agunuworld/java-web-app:2
+docker stop conid
+
+
+
+
+
+
+sshagent(['Docker_Swarm_manager_SSh']) 
+--------------------------------------------------------------
+node (Node1)
+{
+    stage("Git CheckOut"){
+        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/HmssApp/spring-boot-mongo-docker.git']]])
+    }
+    
+    stage(" Maven Clean Package"){
+      def mavenHome =  tool name: "Maven4", type: "maven"
+      def mavenCMD = "${mavenHome}/bin/mvn"
+      sh "${mavenCMD} clean install package"
+    } 
+    
+    stage("Build Dokcer Image") {
+         sh "docker build -t agunuworld/spring-boot-mongo:${buildNumber}  ."
+    }
+    
+    stage("Docker Push"){
+     withCredentials([string(credentialsId: 'dockerpwd', variable: 'Docker_Hub_Pwd')])    {
+     sh "docker login -u agunuworld -p ${Docker_Hub_Pwd}"
+      }
+      sh "docker push agunuworld/spring-boot-mongo:${buildNumber}"
+        
+    }  
+    
+    // Remove local image in Jenkins Server
+    stage("Remove Local Image"){
+        sh "docker rmi -f  agunuworld/spring-boot-mongo:${buildNumber}"
+    }
+    
+    stage("Deploy to docker swarm cluster"){
+       sshagent(['Docker_Swarm_manager_SSh'])   {
+                    sh 'scp -o StrictHostKeyChecking=no  docker-compose.yml ec2-user@172.31.27.4:'
+                    //sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.27.4 docker stack rm springboot'
+                    sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.27.4 docker stack deploy --prune --compose-file docker-compose.yml springboot'
+        }
+    }
+}
+
+
+
+
+ stage("Deploy to docker swarm cluster"){
+         sshagent(['Docker_Swarm_manager_SSh'])  {
+            sh 'ssh -o StrictHostKeyChecking=no  ec2-user@172.31.27.4 docker service rm javawebapp || true'
+            sh "ssh ec2-user@172.31.27.4 docker service create --name javawebapp -p 8080:8080 --replicas 2  agunuworld/java-web-app:${buildNumber}"
+        }
+    }

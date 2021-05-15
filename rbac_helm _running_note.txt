@@ -1,0 +1,206 @@
+ sudo apt update -y
+    3  clear
+    4  sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+    5  sudo apt install wget -y
+    6  sudo wget https://github.com/kubernetes/kops/releases/download/1.10.0/kops-linux-amd64
+    7  sudo chmod +x kops-linux-amd64
+    8  sudo mv kops-linux-amd64 /usr/local/bin/kops
+    9  sudo curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+   10  aws s3 mb s3://agunubucket.in
+   11  source .bashrc
+   12  ssh-keygen
+   13  clear
+   14  kops create cluster --zones us-east-1a --networking weave --master-size t2.medium --master-count 1 --node-size t2.small --node-count=3 ${NAME}
+   15  kops create secret --name ${NAME} sshpublickey admin -i ~/.ssh/id_rsa.pub
+   16  kops update cluster ${NAME} --yes
+   17  clear
+   18  kops validate cluster
+   19  clear
+   20  kubectl cluster-info
+   21  ls .kube/
+   22  cat .kube/config
+   23  clear
+   24  openssl genrsa -out Michale.key 2048
+   25  cat Michale.key
+   26  clear
+   27  openssl rand -out .rnd -hex 256
+   28  openssl req -new -key Michale.key -out Michale.csr -subj "/CN=Michale/O=Developer"
+   29  ls
+   30  clear
+   31  ls
+   32  cat Michale.csr
+   33  clear
+   34  kops delete cluster --name=${NAME} --state=${KOPS_STATE_STORE} --yes
+   35  clear
+   36  ls
+   37  rm -rf Michale.csr
+   38  rm -rf Michale.key
+   39  clear
+   40  ls -la
+   41  clear
+   42  kops create cluster --zones us-east-1a --networking weave --master-size t2.medium --master-count 1 --node-size t2.small --node-count=3 ${NAME}
+   43  kops create secret --name ${NAME} sshpublickey admin -i ~/.ssh/id_rsa.pub
+   44  kops validate cluster
+   45  clear
+   46  kops validate cluster
+   47  kubectl get nodes
+   48  clear
+   49  openssl genrsa -out Michale.key 2048
+   50  ls
+   51  cat Michale.key
+   52  clear
+   53  #firt create a certificate key for a user machale done above
+   54  #then create a CSR that si certificat singing request after generating the certificat
+   55  openssl req -new -key Michale.key -out Michale.csr -subj "/CN=Michale/O=Developer"
+   56  ls
+   57  #then kubernete has to trust the file so kube will be inform
+   58  #a cluster was generated usign kops
+   59  clear
+   60  aws s3 ls
+ 61  aws s3 ls s3://agunubucket.in
+   62  aws s3 ls s3:///agunubucket.in
+   63  aws s3 ls s3:///agunubucket.in/agunubucket.in
+   64  aws s3 ls s3:///agunubucket.in/agunubucket.in/
+   65  aws s3 ls s3://agunubucket.in/agunubucket.in/
+   66  aws s3 ls s3://agunubucket.in/
+   67  aws s3 ls s3://agunubucket.in/myvm.k8s.local/
+   68  aws s3 ls s3://agunubucket.in/myvm.k8s.local/pki/
+   69  aws s3 ls s3://agunubucket.in/myvm.k8s.local/pki/private/
+   70  aws s3 ls s3://agunubucket.in/myvm.k8s.local/pki/private/ca/
+   71  aws s3 cp s3://agunubucket.in/myvm.k8s.local/pki/private/ca/6847071005550379554975823443.key ca.key
+   72  ls
+   73  clear
+   74  #the ca key has been downloaded
+   75  aws s3 ls s3://agunubucket.in/myvm.k8s.local/pki/private/ca/
+   76  aws s3 ls s3://agunubucket.in/myvm.k8s.local/pki/
+   77  aws s3 ls s3://agunubucket.in/myvm.k8s.local/pki/issued/
+   78  aws s3 ls s3://agunubucket.in/myvm.k8s.local/pki/issued/ca/
+   79  aws s3 cp s3://agunubucket.in/myvm.k8s.local/pki/issued/ca/6847071005550379554975823443.crt ca.crt
+   80  clear
+   81  openssl x509 -req -in Michale.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out Michale.crt -
+   82  openssl x509 -req -in Michale.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out Michale.crt -days 365
+   83  clear
+   84  ls -la
+   85  clear
+   86  kubectl config --kubeconfig=MichaleConfig --embed-certs=true set-cluster kubernetes --server= https://api-myvm-k8s-local-02aipn-1921124811.us-east-1.elb.amazonaws.com --certificate-authority=ca.crt
+   87  clear
+   88  kubectl config --kubeconfig=MichaleConfig --embed-certs=true set-cluster kubernetes --server=https://api-myvm-k8s-local-02aipn-1921124811.us-east-1.elb.amazonaws.com --certificate-authority=ca.crt
+   89  cat MichaleConfig
+   90  history
+   91  clear
+   92  #sign th user cerficate and key
+   93  kubectl config --kubeconfig=MichaleConfig --embed-certs=true set-credentials Michale.crt  --client-key=Michale.key
+   94  ls
+   95  cat Michale.key
+   96  clear
+   97  ls
+   98  cat Michale.crt
+   99  cat Michale.csr
+  100  clear
+  101  ls
+  102  cat MichaleConfig
+  103  #set the context means link cluster with users
+ clear
+  109  kubectl config --kubeconfig=MichaleConfig set-context standard --cluster=kubernetes --namespace=default --user=Michale
+  110  kubectl config --kubeconfig=MichaleConfig use-context standard
+  111  kubectl --kubeconfig MichaleConfig get pods
+  112  kubectl --kubeconfig=MichaleConfig get pods
+  113  kubectl --kubeconfig MichaleConfig get pods
+  114  kubectl get pod
+  115  kubectl get namespaces
+  116  clear
+  117  ls
+  118  rm -rf MichaleConfig
+  119  ls
+  120  clea
+  121  clea
+ 122  ls
+  123  kubectl config --kubeconfig=MichaleConfig --embed-certs=true set-cluster kubernetes --server=https://api-myvm-k8s-local-02aipn-1921124811.us-east-1.elb.amazonaws.com --certificate-authority=ca.crt
+  124  kubectl config set-credentials Michale --kubeconfig=MichaleConfig --client-certificate=
+  125  ls
+  126  cat MichaleConfig
+  127  clear
+  128  kubectl config --kubeconfig=MichaleConfig set-context standard --cluster=kubernetes --namespace=default --user=Michale
+  129  kubectl config --kubeconfig=MichaleConfig use-context standard
+  130  kubectl --kubeconfig MichaleConfig get pods
+  131  kubectl --kubeconfig=MichaleConfig get pods
+  132  clear
+  133  vi Role.yml
+  134  kubectl apply -f Role.yml
+  135  kubectl --kubeconfig MichaleConfig get pods
+  136  vi rolebinding.yml
+  137  kubectl apply -f rolebinding.yml
+  138  vi rolebinding.yml
+  139  kubectl apply -f rolebinding.yml
+  140  kubectl --kubeconfig MichaleConfig get pods
+  141  cat MichaleConfig
+  142  clear
+  143  ls
+  144  history
+  145  clear
+  146  vi Role.yml
+  147  kubectl apply -f Role.yml
+  148  kubectl --kubeconfig MichaleConfig get pods
+  149  kubectl --kubeconfig MichaleConfig apply -f pod.yml
+  150  kubectl --kubeconfig MichaleConfig get pods
+                                                              ROLE
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+ name: devrole
+ namespace: default
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "update", "list","create"]
+- apiGroups: ["apps"]
+  resources: ["replicaset","daemonset","deployment"]
+  verbs: ["get", "update", "list"]
+                                                        ROLEBINDING
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+ name: dev-role-binding-user
+ namespace: default
+subjects:
+- kind: User
+  name: Michale
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+ kind: Role
+ name: devrole
+ apiGroup: rbac.authorization.k8s.io
+
+                                                                      Helm
+ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+  156  clear
+  157  helm
+  158  clear
+  159  helm repo
+  160  clear
+  161  helm ls
+  162  helm search repo stable
+  163  clear
+  164  helm repo remove repo_name
+  165  helm repo ls
+  166  helm ls
+  167  clear
+  168  helm search nginx
+  169  clear
+  170  helm search repo  nginx
+  171  helm search repo
+  172  helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+  173  helm search repo stable
+  174  clear
+  175  helm search repo stable
+  176  clear
+  177  helm search jenkins
+  178  clear
+  179  helm search repo jenkins
+  180  helm search repo stable/jenkins
+  181  helm search repo stable/grafana
+  182  helm search repo stable/prometheus
+  183  helm search repo stable/docker
+  184  helm search repo stable/sonarqube
+  185  helm search repo stable/nexus
+  186  clear

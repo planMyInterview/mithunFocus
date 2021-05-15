@@ -1,0 +1,980 @@
+Containerization
+Docker
+Rocket
+
+
+Cotainer Orchestration Tools
+Docker Swarm
+
+Kubernetes Can Orchestrate Docker or Rocker(rkt) containers also.
+
+OpenShift
+
+	
+Access Key ID:
+AKIAJTOQSXB24XHVMDVQ
+Secret Access Key:
+pwv56nRvVJgSqalKEYLUKD31cjKkzg628HYfk6eG
+
+Kubernetes Setup:
+
+Types of Kubernetes Clusters.
+
+  1) Self Managed Kubernetes Cluster.
+  
+     minikube --> Using minikube We can set up single node k8's Cluster.
+	 Kubeadm  --> We can setup multi node k8's cluster.
+	 
+  
+  2) Cloud Managed Services(PAAS).
+    
+    EKS --> Elastic Kuberetes Service --> AWS
+    AKS --> Azure Kubernetes Service --> Azure
+    GKE --> Google Kubernetes Engine --> Google Cloud
+
+    KOPS --> Kubernetes Operations using which we can setup k8s in AWS.
+
+
+Name Spaces
+
+kubectl get namespaces
+
+kubectl create namespace <nameSpaceName>
+
+ex:
+
+kubectl create flipkart
+
+
+Kubernetes Objects:
+
+POD
+
+Replication Controller
+
+Replica Set
+
+DaemonSet
+
+Deployment
+
+Service
+
+Volume
+
+
+# POD Manifest
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: <PodName>
+  labels:
+    <Key>: <value>
+  namespace: <nameSpaceName>
+spec:
+  containers:
+  - name: <NameOfTheCotnainer>
+    image: <imagaName>
+	ports:
+	- containerPort: <portOfContainer>
+	
+Example:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: javawebapppod
+  labels:
+    app: javawebapp	
+spec:
+  containers:
+  - name: javawebappcontainer
+    image: dockerhandson/java-web-app
+    ports:
+    - containerPort: 8080
+
+
+kubectl apply -f <fileName.yml>
+
+kubectl get all -n <namespace>
+kubectl get pods -n <namespace>
+kubectl get pods -n <namespace> - o wide
+
+
+Note: If we don't mention -n <namespace> it will refer default namespace.
+If required we can change name space context.
+
+kubctl config set-context --curent --namespace=<namespace>
+ex:
+kubectl config set-context --curent --namespace=flipkart
+
+After setting context if by default it will point to that namespace.
+
+
+# Multi Container POD
+apiVersion: v1
+kind: Pod
+metadata:
+  name:  <PODName>
+  labels:
+    <labelKey>: <labelValue> 
+spec:
+  containers:
+  - name: <nameOftheCotnainer>
+    image: <imageName>
+	ports:
+	- containerPort: <portNumberOfContainer>
+  - name: <nameOftheCotnainer>
+    image: <imageName>
+    ports:
+    - containerPort: <portNumberOfContainer>	
+	
+Service
+========
+apiVersion: v1
+kind: Service
+metadata:
+  name: <serviceName>
+  namespace: <nameSpace>
+spec:
+  type: <ClusterIP/NodePort>
+  selector:
+     <key>: <value>
+  ports:
+  - port: <servciePort>	# default It to 80
+    targetPort: <containerPort> 
+
+With in Cluster ClusterIP
+==========================
+apiVersion: v1
+kind: Service
+metadata:
+  name: javawebappservice
+spec:
+  type: ClusterIP
+  selector:
+     app: javawebapp
+  ports:
+  - port: 80
+    targetPort: 8080
+
+Out side of Cluster Node Port
+====================
+apiVersion: v1
+kind: Service
+metadata:
+  name: javawebappservice
+spec:
+  type: NodePort
+  selector:
+     app: javawebapp
+  ports:
+  - port: 80
+    targetPort: 8080
+	nodePort: 30033 # This Optional if u don't mention nodePort.Kuberetes will assign.
+	
+
+kubectl apply -f <file.yml>
+
+kubectl get svc 
+kubectl get svc -n <namespace>
+kubectl get all
+	
+
+What is node port range?
+30000-32767
+	
+# Replication Conrtoller
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: <replicationControllerName>
+  namespace: <nameSpaceName>
+spec:
+  replicas: <noOfReplicas>
+  selector:
+    <key>: <value>
+  template: # POD Template
+    metadata:
+	  name: <PODName>
+	  labels:
+	    <key>: <value>
+	spec:
+	- containers:
+	  - name: <nameOfTheContainer>
+	    image: <imageName>
+		ports:
+		- containerPort: <containerPort>
+  	
+Example:
+========
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: javawebapprc
+spec:
+  replicas: 1
+  selector:
+    app: javawebapp
+  template:
+    metadata:
+      name: javawebapppod
+      labels:
+        app: javawebapp
+    spec:
+      containers:
+      - name: javawebappcontainer
+        image: dockerhandson/java-web-app
+        ports:
+        - containerPort: 8080
+
+kubectl apply -f <filename.yml>
+kubectl get rc 
+kubectl get rc -n <namespace>
+kubectl get all
+
+Date: 25-04-2020 6:00 AM
+
+ReplicaSet:
+
+What is difference b/w replicaset and replication controller?
+
+It's next gernation of replication controller. Both manages the pod replicas. But only difference as now is
+selector support.
+
+RC Supports only equality based selector.
+Key = Vaule
+RS Supports equality bases and also set based selector.
+
+Set Basesd:
+key in (Value1,Values)
+Key not ins (Value1,value2)
+
+
+# Mainfest File RS
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: <RSName>
+spec:
+  replicas: <noOfPODReplicas>
+  selector:  # To Match POD Labels.
+    matchLabels:  # Equality Based Selector
+	  <key>: <value>
+    matchExpressions:  # Set Based Selector 
+	- key: <key>
+	  operator: <in/not in>
+	  values:
+	  - <value1>
+	  - <value2>
+  template:
+    metadata:
+	  name: <PODName>
+	  labels:
+	    <key>: <value>
+	spec:
+	- containers:
+	  - name: <nameOfTheContainer>
+	    image: <imageName>
+		ports:
+		- containerPort: <containerPort>
+
+
+Example:
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata: 
+  name: javawebapprs
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: javawebapp
+  template: 
+    metadata: 
+	  name: javawebapppod
+      labels: 
+        app: javawebapp
+    spec: 
+      containers: 
+      - image: dockerhandson/java-web-app:1
+        name: javawebappcontainer
+        ports: 
+        - containerPort: 8080
+
+
+What is difference b/w kubectl create and kubectl apply ?
+
+Create will Create an Object if it's not already created. Apply will perfrom create if object is not created earlier.If it's already
+created it will update.
+
+
+
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: <RSName>
+spec:
+  selector:  # To Match POD Labels.
+    matchLabels:  # Equality Based Selector
+	  <key>: <value>
+    matchExpressions:  # Set Based Selector 
+	- key: <key>
+	  operator: <in/not in>
+	  values:
+	  - <value1>
+	  - <value2>
+  template:
+    metadata:
+	  name: <PODName>
+	  labels:
+	    <key>: <value>
+	spec:
+	- containers:
+	  - name: <nameOfTheContainer>
+	    image: <imageName>
+		ports:
+		- containerPort: <containerPort>
+
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata: 
+  name: javawebappds
+spec: 
+  selector: 
+    matchLabels: 
+      app: javawebapp
+  template: 
+    metadata: 
+	  name: javawebapppod
+      labels: 
+        app: javawebapp
+    spec: 
+      containers: 
+      - image: dockerhandson/java-web-app:1
+        name: javawebappcontainer
+        ports: 
+        - containerPort: 8080
+
+
+
+# Deployment Manifest
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <deploymentName>
+spec:
+  replicas: <noOfReplicas>
+  strategy:
+    type: <deploymentStrategy>
+  selector:
+     matchLabels:
+	   <key>: <value>
+  template:
+    metadata:
+	  name: <PODName>
+	  labels:
+	    <key>: <value>
+	spec:
+	- containers:
+	  - name: <nameOfTheContainer>
+	    image: <imageName>
+		ports:
+		- containerPort: <containerPort>
+  
+
+#Deployment Example  with Recreate
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: javawebappdeployment
+spec:
+  replicas: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: javawebapp
+  template:
+    metadata:
+      name: javawebapppod
+      labels:
+        app: javawebapp
+    spec:
+      containers:
+      - name: javawebappcontainer
+        image: dockerhandson/java-web-app:1
+        ports:
+        - containerPort: 8080	
+	   	  	  
+
+Commands
+=============
+
+kubectl get deployment  
+kubectl rollout status deployment <deploymentName>
+kubectl scale deployment <deploymentName> --replicas <deploymentName>
+# To display deployment history
+kubectl rollout history deployment <deploymentName>
+
+
+# Update Image for the deployment
+kubectl set image deployment <deploymentName> <containerName>=<imageNameWithVersion> --record 
+
+EX:
+kubectl set image deployment javawebappdeployment javawebappcontainer=dockerhandson/java-web-app:2 --record 
+
+# To display deployment pod template of a given revision
+kubectl rollout history deployment <deploymentName> --revison=<revisonNumber>
+
+# Roll back (undo deployment)
+kubectl rollout undo deployment <deploymentName> --to-revison=<revisonNumber>
+Ex: 
+kubectl rollout undo deployment javawebappdeployment --to-revison=1
+
+What is the default deployment strategy?
+Rolling Update
+
+# Rolling Update Manifest
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: javawebappdeployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:        
+      app: javawebapp
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+       maxSurge: 1
+       maxUnavailable: 1
+  minReadySeconds: 30
+  template:
+    metadata:
+      name: javawebapppod
+      labels:
+        app: javawebapp
+    spec:
+      containers:
+      - name: javawebappcontainer
+        image: dockerhandson/java-web-app:2
+        ports:
+        - containerPort: 8080 
+
+
+Volumes:
+
+Kubernetes Supports different types of volumes.
+
+hostPath
+nfs
+
+awsElasticBlockStore
+googlePersistantdisk
+azureFile
+azuredisk
+
+persistantVolume
+persistantVolumeClaim
+
+
+# Host Path Volume in mongo POD
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: springapprc
+spec:
+  replicas: 2
+  selector:
+    app: springbootapp
+  template:
+    metadata:
+      name: springbootapppod
+      labels:
+        app: springbootapp
+    spec:
+      containers:
+        - name: springbootcontainer
+          image: dockerhandson/spring-boot-mongo
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springappservice
+spec:
+  type: NodePort
+  selector: 
+     app: springbootapp
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: mongorc
+spec:
+  replicas: 1
+  selector:
+    app: mongodb
+  template:
+    metadata:
+      name: mongodbpod
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodbcontainer
+          image: mongo
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+          - name: hostpathvolume
+            mountPath: /data/db # Container Folder
+      volumes:
+      - name:  hostpathvolume
+        hostPath: 
+          path: /tmp/mongobackup
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
+
+# NFS Volume in mongo POD
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: springapprc
+spec:
+  replicas: 2
+  selector:
+    app: springbootapp
+  template:
+    metadata:
+      name: springbootapppod
+      labels:
+        app: springbootapp
+    spec:
+      containers:
+        - name: springbootcontainer
+          image: dockerhandson/spring-boot-mongo
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springappservice
+spec:
+  type: NodePort
+  selector: 
+     app: springbootapp
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: mongorc
+spec:
+  replicas: 1
+  selector:
+    app: mongodb
+  template:
+    metadata:
+      name: mongodbpod
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodbcontainer
+          image: mongo
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+          - name: nfsvolume
+            mountPath: /data/db # Container Folder
+      volumes:
+      - name:  nfsvolume
+        nfs:
+            path: /mnt/share
+            server: 172.31.45.104
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
+
+
+
+
+PersistentVolume – the low level representation of a storage volume.
+PersistentVolumeClaim – the binding between a Pod and PersistentVolume.
+Pod – a running container that will consume a PersistentVolume.
+StorageClass – allows for dynamic provisioning of PersistentVolumes.
+
+
+
+
+PV Will have Access Modes
+
+ReadWriteOnce – the volume can be mounted as read-write by a single node
+ReadOnlyMany – the volume can be mounted read-only by many nodes
+ReadWriteMany – the volume can be mounted as read-write by many nodes
+
+In the CLI, the access modes are abbreviated to:
+
+RWO - ReadWriteOnce
+ROX - ReadOnlyMany
+RWX - ReadWriteMany
+
+
+Claim Policies
+
+A Persistent Volume can have several different claim policies associated with it including
+
+Retain – When the claim is deleted, the volume remains.
+Recycle – When the claim is deleted the volume remains but in a state where the data can be manually recovered.
+Delete – The persistent volume is deleted when the claim is deleted.
+The claim policy (associated at the PV and not the PVC) is responsible for what happens to the data on when the claim has been deleted.
+
+
+# Host Path PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-hostpath
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  persistentVolumeReclaimPolicy: Retain	
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/kube"
+
+
+# PVC
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-hostpath
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+
+
+# NFS PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nfs-pv1
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  persistentVolumeReclaimPolicy: Retain	
+  accessModes:
+    - ReadWriteMany
+   	
+  nfs:
+    server: <IPAddress>
+    path: "/mnt/share"
+
+# PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nfs-pv1
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 500Mi
+
+
+
+In POD Template Use PVC name
+============================
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: springapprc
+spec:
+  replicas: 2
+  selector:
+    app: springbootapp
+  template:
+    metadata:
+      name: springbootapppod
+      labels:
+        app: springbootapp
+    spec:
+      containers:
+        - name: springbootcontainer
+          image: dockerhandson/spring-boot-mongo
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springappservice
+spec:
+  type: NodePort
+  selector: 
+     app: springbootapp
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: mongorc
+spec:
+  replicas: 1
+  selector:
+    app: mongodb
+  template:
+    metadata:
+      name: mongodbpod
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodbcontainer
+          image: mongo
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+          - name: pvc
+            mountPath: /data/db # Container Folder
+      volumes:  
+      - name: pvc
+        persistentVolumeClaim:
+          claimName: pvc-hostpath # PVC Name Which we created earlier.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
+
+
+
+
+Kubernetes Cluster we are able to achive below on Application(POD) Level.
+HA
+F.T
+Scaling
+Elastictiy  
+
+
+
+
+
+KOPS --> Kubernetes Operations 
+Using KOPS we can create production ready(Highly avaiable) kubernetes cluster in AWS.
+KOPS Software will create AWS AutoScaling Groups & Lanuch Configurations.
+AWS AutoScaling Will manage/provison the machines.
+
+Charges will be only EC2.
+
+EKS --> Elastic Kubernets Service
+
+It will charger for both.
+ControlPlane + EC2 Charages
+
+
+
+Docker with Docker swarm
+========================
+Responsible for Dockerizing applications.
+Configuring the Docker containers and creating Docker files for different environments.
+Strong experience in writing docker files, docker compose files.
+Responsible for configuring docker private registries to maintain docker images.
+Responsible for creating & configuring docker volumes.
+Responsible for creating docker swarm cluster and deploying docker services in docker swarm cluster.
+Implemented CI/CD using Jenkins & docker swarm.
+
+
+Docker with Kubernetes
+========================
+Responsible for Dockerizing applications.
+Strong experience in writing docker files.
+Responsible for configuring docker private registries to maintain docker images.
+Responsible for creating Kubernetes manifest files like daemon sets, replica sets, deployments.
+Responsible for creating & configuring persistent volumes ,persistent volume claims.
+Strong experience in Kubernetes cluster setup and deploying applications in Kubernetes cluster.
+Implemented CI/CD using Jenkins ,docker & Kubernetes.
+
+ clear
+    2  mkdir DockerNode
+    3  chmod -R 777 DockerNode/
+    4  cd DockerNode
+    5  ls -l
+    6  cd ..
+    7  ls -l
+    8  cd DockerNode
+    9  pwd
+   10  clear
+   11  cd ~
+   12  sudo su -
+   13  sudo groupadd docker
+   14  sudo usermod -aG docker ${USER}
+   15  chmod 777 /var/run/docker.sock
+   16  sudo chmod 777 /var/run/docker.sock
+   17  clear
+   18  how to see the list of block storage
+   19  history
+   20  clear
+   21  lsblk
+   22  part is monuted on root
+   23  to see file system
+   24  df -kh
+   25  we can create an addition volume and attach to this server
+   26  clear
+   27  can i create volume in us-east-2b and attach it to us-east-2a No
+   28  history
+   29  clear
+   30  Now create a volume by going to the volume section on awd console
+   31  df -kh
+   32  lsblkk
+   33  lsblk
+   34  sudo file -s /dev/xvdf
+   35  sudo mkfs.ext4 /dev/xvdf
+   36  sudo file -s /dev/xvdf
+   37  lsblk
+   38  ls
+   39  now this file storage is not mounted to any sortware yet
+   40  check the directory of what u install and mount
+   41  how to mount and what is the command
+   42  ls
+   43  cd DokerNode
+   44  ls
+   45  cd DockerNode
+   46  ld
+   47  ls
+   48  cd ~
+   49  ls
+   50  sudo  mount /dev/xvdf DockerNode/
+   51  lsblk
+   52  the ec2 now has two volume the root and addictional volume
+   53  cd DockerNode
+   54  ls
+   55  clear
+   56  cd ~
+   57  ls
+   58  cd DockerNode
+   59  ls
+   60  cd lost+found
+   61  cd lost
+   62  cd found
+   63  ls -l
+   64  lsblk
+   65  cd /home/ec2-user/DockerNode
+   66  ls
+   67  cd /dev/xvdf
+   68  cd ~
+   69  then take a snapshot from the volume on aws console ---vol-action-createSnapshot
+   70  i can not see the foler or file on the server
+   71  but if i formate we lost the data so check if the file is there sudo file -s /dev/xvdf
+   72  so make a folder  mkdir  DockerNode
+   73  ls DockerNode
+   74  then sudo mount /dev/xvdf DockerNode
+   75  clear
+   76  history
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

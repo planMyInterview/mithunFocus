@@ -1,0 +1,534 @@
+1.Methun Technology Method
+2.Madhu Ansible Method
+User name,Password,Access key ID,Secret access key,Console login link
+TerraForm_User,,AKIAUQ6YGCGHCGI4WLMI
+GGYFda14YPQi94W/q5i6VEr9aiNsvvSz/03PGtyM
+,https://311301640590.signin.aws.amazon.com/console
+ami-0520e698dd500b1d1
+https://www.terraform.io/docs/providers/aws/r/elb.html --------load balancer
+https://medium.com/@ratulbasak93/aws-elb-and-autoscaling-using-terraform-9999e6266734
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                                                                                                   Mithun Codes
+                                                                                                                  ............................
+https://www.youtube.com/channel/UC-Jr307MbEREy8bG6McwD6w
+https://www.youtube.com/channel/UC-Jr307MbEREy8bG6McwD6w
+http://mithuntechnologies.com/devops/DevOpsToolsMithunTechnologies.html
+      mithuntechnologies-devops.blogspot.com
+      
+              ######## Anath Coach
+ https://www.coachdevops.com/2020/06/deploy-python-app-into-kubernetes.html
+ 
+                            INSTALL KUBECTL
+ Install kubectl
+
+ sudo curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+
+ sudo chmod +x ./kubectl
+ sudo mv ./kubectl /usr/local/bin/kubectl
+                                                                                       
+                           ####DOCKER INSTALLATION REDHAT8
+dnf update -y ; reboot
+dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+dnf list docker-ce
+dnf install docker-ce --nobest -y
+systemctl start docker
+systemctl enable docker
+docker --version
+dnf install curl -y
+curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+sudo chmod 666 /var/run/docker.sock
+
+                                                                                       
+                                                                                       
+                                                                                       INSTALLATIONS
+                                                                                     .........................................
+                                                                                      Jenkins Installation
+                                                                                      .........................................                        
+cd /opt
+yum install wget -y
+wget -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.rpm
+yum install jdk-8u131-linux-x64.rpm -y
+                                                                             #Install Jenkins
+
+wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+yum install jenkins -y
+systemctl status jenkins
+systemctl start jenkins
+systemctl restart jenkins
+
+
+                                                                                    SonarQube4GB
+                                                                                   ..............................
+                                                                 #java -version 
+sudo su -
+cd /opt
+yum install wget -y
+wget -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.rpm
+yum install jdk-8u131-linux-x64.rpm -y
+
+
+                                                                            #Download the SonarqQube Server software.
+
+yum install wget unzip -y
+wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.8.zip
+https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.2.0.32929.zip
+unzip sonarqube-7.8.zip
+                                                                  #Create a new user called sonar and grant sudo access to manage sonar services as follows
+useradd sonar
+                                                                   #Give the sudo access to sonar user
+visudo
+sonar ALL=(ALL) NOPASSWD: ALL
+                                                           #Change the owner and group permissions to /opt/sonarqube-7.8/ directory.
+chown -R sonar:sonar /opt/sonarqube-7.8/
+chmod -R 775 /opt/sonarqube-7.8/
+                                                          #Login as a sonar user
+su - sonar
+cd /opt/sonarqube-7.8/bin/linux-x86-64/
+./sonar.sh start
+./sonar.sh start
+                                                            #Next time start
+sh sonar.sh start
+
+                                                                                     Tomcat Installation
+                                                                                 ................................................
+cd /opt
+yum install wget -y
+wget -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.rpm
+yum install jdk-8u131-linux-x64.rpm -y
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+java -version
+#!/bin/bash
+sudo yum install java-1.8.0-openjdk -y
+cd /opt
+sudo yum install wget -y
+sudo wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.34/bin/apache-tomcat-9.0.34.tar.gz
+sudo tar -xvf apache-tomcat-9.0.34.tar.gz
+sudo mv  apache-tomcat-9.0.34 tomcat9
+sudo chmod 777 -R tomcat9
+cd /opt/tomcat9
+./bin/startup.sh
+
+                                                             #Now Install Tomcat
+cd /opt
+sudo yum install wget
+ wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.34/bin/apache-tomcat-9.0.34.tar.gz
+yum install wget unzip -y
+unzip apache-tomcat-9.0.31.zip
+cd /opt/apache-tomcat-9.0.31/bin
+chmod u+x *.sh
+                                              #sh /opt/apache-tomcat-9.0.24/bin/startup.sh
+ln -s /opt/apache-tomcat-9.0.31/bin/startup.sh /usr/bin/startTomcat
+ln -s /opt/apache-tomcat-9.0.31/bin/shutdown.sh /usr/bin/stopTomcat
+/opt/  ----------------------------------------------
+stopTomcat
+ startTomcat -------------------------url ipdress --Tomcat-home page
+                                                #vi /opt/apache-tomcat-9.0.31/webapps/manager/META-INF/context.xml
+                                                         #Comment the below linescd
+ <!-- <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+ allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> -->
+stopTomcat
+startTomcat
+                                                             #username and password
+/opt/apache-tomcat-2/conf/ vi tomcat-user.xml
+
+<role rolename="manager-gui"/>
+<role rolename="manager-script"/>
+<user username="tomcat" password="password" roles="manager-gui,manager-script"/>
+
+stopTomcat
+startTomcat
+#ps -fax | grep tomcat
+                                                       #Change port number
+conf ---server.xml
+ ----tomcat-users.xml
+                                                                                                          Nexus Server Installation
+                                                                                                       .............................................................
+
+Login as a root user
+sudo su -
+cd /opt
+yum install tar wget -y
+wget http://download.sonatype.com/nexus/3/nexus-3.15.2-01-unix.tar.gz
+tar -zxvf nexus-3.15.2-01-unix.tar.gz
+mv /opt/nexus-3.15.2-01 /opt/nexus
+
+#As a good security practice, Nexus is not advised to run nexus service as a root user, so create a new user called nexus and grant sudo access to manage nexus services as follows.
+ 
+useradd nexus
+
+#Give the sudo access to nexus user
+
+visudo
+nexus ALL=(ALL) NOPASSWD: ALL
+
+#Change the owner and group permissions to /opt/nexus and /opt/sonatype-work directories.
+
+chown -R nexus:nexus /opt/nexus
+chown -R nexus:nexus /opt/sonatype-work
+chmod -R 775 /opt/nexus
+chmod -R 775 /opt/sonatype-work
+
+#Open /opt/nexus/bin/nexus.rc file and  uncomment run_as_user parameter and set as nexus user.
+
+vi /opt/nexus/bin/nexus.rc
+run_as_user="nexus"
+
+#Create nexus as a service
+
+ln -s /opt/nexus/bin/nexus /etc/init.d/nexus
+
+#Switch as a nexus user and start the nexus service as follows.
+
+su - nexus
+
+#Enable the nexus services
+sudo systemctl enable nexus
+
+#Start the nexus service
+sudo systemctl start nexus
+                                                       
+aguntech
+   d205f18f5146640b18ca42f7cf079bb797df353f
+
+                                                                                                         ANSIBLE BY AUTOMATION YOUTUBE
+                                                                                              ///////////////////////////////////////
+                                                                                                        #INSTALLATION USING YUM
+ 
+      #Create RedHat 3 Servers (1-AnsibleServer , 2- Host Machines for demo) in AWS.
+      #Create the user ansible and set the password on all hosts:
+            useradd ansadmin
+            passwd ansadmin
+     
+      #Make the necessary entry in sudoers file /etc/sudoersfor ansible        
+           #user for password-less sudo access:
+        visudo
+           ansadmin  ALL=(ALL)   NOPASSWD:  ALL
+      #Make the necessary changes  in sshd_config file /etc/ssh/sshd_config    
+           to enable password based authentication.
+
+         #Un comment PasswordAuthentication yes
+         #and comment  PasswordAuthentication no.
+
+            vi  /etc/ssh/sshd_config
+
+           #Then restart sshd service.
+                service sshd restart
+                                 #Install python
+         yum install python3 -y
+      
+                  #Update python alaternatives
+               alternatives --set python /usr/bin/python3
+      
+          # Verify Python Version
+         python --version
+----------#website--docs.ansible.com
+---------#https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-rhel-centos-
+
+
+                                                         #BEST INSTALLATION INCLUDING PYTHON
+                                                        /////////////////////////////////////
+ #Add a EPEL (Extra Packages for Enterprise Linux)third party repository to get packages for Ansible
+
+7-->rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+                                                                  #Install python
+         yum install python3 -y
+      
+                  #Update python alaternatives
+               alternatives --set python /usr/bin/python3
+      
+          # Verify Python Version
+         python --version
+8-->rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+yum install ansible -y
+ ansible --version
+                                                #Create the user ansadmin and set the password on all hosts and ansible server
+            useradd ansadmin
+            passwd ansadmin               ... ansadmin12345
+     
+                                           #Make the necessary entry in sudoers file /etc/sudoersfor ansible        
+                                             #user for password-less sudo access:
+   visudo
+  ansadmin       ALL=(ALL)      NOPASSWD: ALL
+                                       #Make the necessary changes  in sshd_config file /etc/ssh/sshd_config    to enable password based authentication.
+  vi /etc/ssh/sshd_config
+
+                                               #Un comment PasswordAuthentication yes
+                                                #and comment  PasswordAuthentication no.
+
+                                #Then restart sshd service.
+-- systemctl  sshd restart
+-- service sshd restart
+                           #create a ssh-keygen on ansible server
+su - ansadmin
+targetOne:172.31.23.189
+target two:172.31.16.20
+ssh-keygen
+cd .ssh
+ls -lrt
+                                             #Enable connection
+ssh-copy-id ip-hosts public ip
+                     #verify
+--ssh ip
+--ssh user@ip  
+sudo vi /etc/ansble/ansible.cfg
+host_key                     --------------to be disabled
+ansible all -m  setup
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                      #user using the same hostName and file.Just create ur own ansible working directory to avoid confusion 
+                                                             #from $ command line
+mkdir  -v my_ansible_workspace
+cd my_ansible_workspace
+cp -rpP /etc/ansible/* .
+sudo cp -r /opt/ansadmin/* .
+sudo chown -R ansadmin *
+                                               #nulify hostsfile
+> host
+===================
+                                                #Host key checking on ur work space dir
+cat ansible.cfg | grep -i host_key_
+cat ansible.cfg | grep -i warming
+                                             #enble host key checking
+vi ansible.cfg
+look for hostkey checking
+                                         #working with ur hosts
+sudo vi hosts
+[Java_Group]
+localhost
+ip!!!!!!!!!!!!!!
+[Apache_Group]
+ip!!!!!!!!!!!!!
+[web_serber]
+ip111
+[db:children]
+db_javaGroup
+======================
+                enter ur ipAddress
+ansible ip -m ping
+ansible ip:ip -m ping
+ ansible Java_Group -m ping
+ansible Apache_Group -m ping
+                                                                              #Jenkins codes
+                                                                      //////////////////////
+
+---
+- hosts: all 
+  become: true
+  tasks: 
+    - name: example
+        copy:
+          src: /op/playbooks/wabapp/target/webapp.war
+          dest: /opt/apache-tomcat-8.5.32/webapps
+                                                                  #Tomcat installation using ansible
+
+
+---
+- hosts: web_server
+  become: true
+  gather_facts: false
+  tasks:
+  - name: Download Tomcat
+    get_url: url=https://downloads.apache.org/tomcat/tomcat-9/v9.0.33/bin/apache-tomcat-9.0.33.tar.gz dest=/home/ansadmin
+
+  - name: Extract the file downloaded tomcat file
+    command: tar xvf apache-tomcat-9.0.33.tar.gz
+
+  - name: Move the Tomcat directory to a smaller one
+    command: mv apache-tomcat-9.0.33 tomcat
+
+  - name: Change Ownership and group of the Tomcat directory
+    file: path=/opt/tomcat owner=ansadmin group=ansadmin mode=775 state=directory recurse=yes
+
+  - name: Start Tomcat
+    command: nohup /opt/tomcat/bin/startup.sh # Execute command even after you have exited from the shell prompt
+    become: true
+    become_user: ansadmin
+
+
+                                  #Jenkins installation using ansible
+ ---
+- name: Install Jenkins
+  hosts: Java_Group
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Install yum
+      yum:
+        name:
+          - wget
+          - java-1.8.0-openjdk
+
+    - name: Download jenkins.repo
+      get_url:
+        url: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+        dest: /etc/yum.repos.d/jenkins.repo
+
+    - name: Import Jenkins Key
+      rpm_key:
+        state: present
+        key: https://jenkins-ci.org/redhat/jenkins-ci.org.key
+
+    - name: Install Jenkins
+      yum:
+        name: jenkins
+        state: present
+
+    - name: Start & Enable Jenkins
+      systemd:
+        name: jenkins
+        state: started
+        enabled: true
+
+    - name: Sleep for 30 seconds and continue with play
+      wait_for: timeout=30
+
+    - name: Get init password Jenkins
+      shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+      changed_when: false
+      register: result
+
+    - name: Print init password Jenkins
+      debug:
+        var: result.stdout
+                                                                                          #Apache:9.0.3
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                                #anibleNode@$
+cd .ssh/
+ls
+rm -rf authorized_keys
+ssh-copy-id localhost
+pwd:
+ssh localhost                    ---ssh-----------sucessful,then back to ur working workspace
+
+db_mysql
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+https://awsbloglink.wordpress.com/2018/10/08/how-to-install-jenkins-using-ansible-version-2018/
+https://tomcat.apache.org/download-90.cgi
+https://www.softwaretestinghelp.com/ansible-playbooks-ansible-vaults/
+https://www.redhat.com/en/blog/integrating-ansible-jenkins-cicd-process
+https://opensourceforu.com/2017/08/devops-series-ansible-deployment-jenkins/
+https://docs.ansible.com/ansible/latest/modules/slack_module.html
+/////////////////////////////////////////////////////////////////////////////
+
+   
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                                                                               Docker Installation
+sudo yum update -y
+sudo curl -fsSL  get.docker.com | /bin/bash  ------------------UBUNTU
+sudo apt install docker.io -----------ubuntu
+                                                                                                Docker Hub Deploy
+                                                                                           ////////////////////
+#How to run application?
+docker pull jenkins
+docker run -d --name=Jenkins_Master -p  8080:8080 -p 5000:5000 -v jenkins-data:/var jenkins
+ docker exec Jenkins_Master cat /var/jenkins_home/secrets/initialAdminPassword
+docker container rm id_id
+docker rmi id  rm_image
+//////////////////////////////////////////////////////////////////////////////////////////////
+ https://www.linuxtechi.com/install-docker-ce-centos-8-rhel-8/
+sudo yum update -y
+sduo yum install docker (Amazon Linux/RHEL)
+sudo usermod -aG docker ubuntu
+sudo docker build   -t your_docker_user_id/myphpapp:1 .
+sudo docker build . -t your_docker_user_id/myphpapp
+(note - change the above your_docker_user_id to userid you had created in cloud.docker.com)
+sudo docker images
+the above command to see the image you had created
+sudo docker login
+enter your docker hub crendetials
+sudo docker push your_docker_user_id/myphpapp
+#How to run application?
+docker run -d --name=Jenkins_Master -p  8080:8080 -p 5000:5000 -v jenkins-data:/var jenkins
+ docker exec Jenkins_Master cat /var/jenkins_home/secrets/initialAdminPassword
+sudo docker run -p 8082:80 --rm --name myfirstApp1 your_docker_user_id/myphpapp
+docker run -d -p 8080:8080 --name myFirstApp agunuworld/java-web-app:1
+now go to browser enter the public dns name with port no 8082.  
+
+(Make sure you open port 8082 in security firewall rules for that EC2 instance)
+
+### if you would like to run on differet port 
+sudo docker run -p 8092:80 --rm --name myfirstApp2 your_docker_user_id/myphpapp
+Make sure you open port 8092 in security firewall rules.
+
+
+##sample commands for reference:( you dont have to execute, please refer them)
+
+sudo docker images 
+   - this command will list all docker images you have on your machine.
+   
+sudo docker search ubuntu – search the image in docker registry
+sudo docker pull ubuntu
+  - pull the image from docker registry
+sudo docker ps 
+  - list all the containers running
+sudo docker ps -a  
+  list all the containers running/ran
+$ sudo docker run -it alpine /bin/sh  to run in interactive mode
+$ sudo docker stop <container_id>
+$ sudo docker rm  <container_id>
+
+sudo docker rmi image_id --> To delete the images
+
+sudo docker run alpine /bin/sh
+sudo docker run -it alpine /bin/sh
+
+sudo docker run alpine ls -l
+
+sudo docker run -it --rm -p 8088:8080 tomcat
+
+sudo docker run -d dockersamples/static-site
+sudo docker stop 6a3884611cc6
+sudo docker ps �> to know the running containers
+sudo docker rm  6a3884611cc6
+sudo docker run --name static-site -e AUTHOR="Your Name" -d -P dockersamples/static-site
+sudo docker port static-site
+sudo curl http://localhost:32768
+sudo docker run --name static-site-2 -e AUTHOR="John Smith" -d -p 8080:80 dockersamples/static-site
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ls  -lrt 
+rm hosts                               ---   defaultFile and  create ur file
+rm -rf roles/                        ---Not needed
+sudo vi  agunuHosts          ---     creae UrFile
+ip addresss
+sudo vi ansible.cfg
+inventory     = ./agunuHosts
+                   #remove and take backup
+mv ansible.cfg ansible.cfg_bkp
+                    #returnFile
+mv ansible.cfg_bkp ansible.cfg
+                                                    #run a particuler inventory
+ansible all -m ping -i inventory
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                                       ANSIBLE BY MADHU
+                                                                                              ////////////////////////////

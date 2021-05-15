@@ -1,0 +1,70 @@
+ java -version
+#jenkins
+https://pkg.jenkins.io/redhat-stable/
+www.itzgeek.com/how-tos/linux/centos-how-tos/how-to-install-jenkins-on-rhel-8-centos-7-rhel-7.html
+
+    java -version
+    7  yum list | grep java-1.8
+    8  yum list | grep docker
+    9  yum install java-1.8.0-openjdk-devel -y
+   10  clear
+   11  java -version
+   12  ypated-alternatives --config java
+   13  update-alternatives --config java
+   14  java -version
+   15  clear
+   16  history
+   17  wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+   18   rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+   19    yum install jenkins
+   20  systemctl start jenkins
+   21  system start jenkins
+   22  clear
+   23  service jenkins status
+   24  service jenkins start
+   25  service jenkins enable
+   26  cat /var/lib/jenkins/secrets/initialAdminPassword
+   27  chkconfig jenkins on
+                                                                       install maven
+wget https://us.mirrors.quenda.co/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip
+apache-maven-3.6.3
+vi ~/.bash_profile
+export M2_HOME=/opt/apache-maven-3.6.3
+
+export PATH=$PATH:$M2_HOME/bin
+
+PATH=$PATH:$HOME/bin
+
+export PATH
+source ~/.bash_profile
+ cd /opt
+   31  clear
+   32  wget https://us.mirrors.quenda.co/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip
+   33  ls
+   34  clear
+   35  ls
+   36  unzip apache-maven-3.6.3-bin.zip
+   37  clear
+   38  ls
+   39  rm -rf apache-maven-3.6.3-bin.zip
+   40  ls
+   41  clear
+   42  ls
+   43  cd apache-maven-3.6.3
+   44  ls
+   45  cd bin
+   46  ls
+   47  vi ~/.bash_profile
+   48  source ~/.bash_profile
+   49  mvn -version
+   50  clear
+   51  cd ~
+   52  ls
+   53  yum install git
+                       Email Notification
+                  //////////////////////
+gmail smtp settings
+https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-jenkins/
+chmod 666 /var/run/docker.sock
+https://hooks.slack.com/services/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
+

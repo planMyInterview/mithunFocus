@@ -1,0 +1,36 @@
+node{
+    def Buildnumber= BUILD_NUMBER
+    stage("Git Clone"){
+        git url:'https://github.com/Nishanthi-1704/java-web-app-docker.git' ,branch: 'master'
+    }
+    
+    stage("Maven clean Package"){
+        def MavenHome= tool name: "Maven3.6.3",type: "maven"
+        sh "$MavenHome/bin/mvn clean package"
+    }
+    /*stage("Generating SonarQube Report"){
+        def MavenHome= tool name: "Maven3.6.3",type: "maven"
+        sh "$MavenHome/bin/mvn sonar:sonar"
+    }*/
+    stage("Creating Docker Image"){
+       sh  "docker build -t 35.154.101.170:8083/java-web-app-docker:${Buildnumber} ."
+        
+    }
+    stage("Docker login and Push"){
+        withCredentials([string(credentialsId: 'Docker_Nexus_Repo', variable: 'Docker_Nexus_Repo')]) {
+        sh "docker login -u admin -p ${Docker_Nexus_Repo} 35.154.101.170:8083"
+        }
+        sh "docker push 35.154.101.170:8083/java-web-app-docker:${Buildnumber}"
+    }
+    
+    stage("Docker Pull and Deploy"){
+        sshagent(['Deployment_Server']) {
+        withCredentials([string(credentialsId: 'Docker_Nexus_Repo', variable: 'Docker_Nexus_Repo')]) {
+        sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.34.122 docker login -u admin -p ${Docker_Nexus_Repo} 35.154.101.170:8083"
+        }
+        sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.34.122 docker rm -f javawebappcontainer || true"
+        sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.34.122 docker run -d -p 8080:8080 --name javawebappcontainer 35.154.101.170:8083/java-web-app-docker:${Buildnumber}"
+        }
+    }
+    
+}
